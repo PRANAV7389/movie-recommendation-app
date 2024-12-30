@@ -29,6 +29,8 @@ st.title("🎥 Enhanced Movie Recommendation System")
 st.markdown(
     """
     Welcome to the **Enhanced Movie Recommendation System**! Enter your favorite movie, and we'll recommend similar movies with detailed insights.
+    
+    Developed by: [Pranav Sharma](https://www.linkedin.com/in/pranav-sharma-7b45531b8)
     """
 )
 
