@@ -13,4 +13,4 @@ The dataset (`movies.csv`) should be in the same directory as `app.py`.
 This app is deployed on [Streamlit Community Cloud](https://streamlit.io/cloud).
 
 ### Demo
-[Click here to access the app](<your-app-url>)
+[Click here to access the app]([<your-app-url>](https://movie-recommendation-app-7tx5uztayh7mloqejec5os.streamlit.app/))
