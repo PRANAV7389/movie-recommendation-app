@@ -5,11 +5,32 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import difflib
 
+# Apply Custom CSS for Styling
+def apply_custom_css():
+    st.markdown(
+        """
+        <style>
+        .main {background-color: #f0f0f0;}
+        .stButton>button {background-color: #007BFF; color: white; font-size: 16px;}
+        .stDownloadButton>button {background-color: #28a745; color: white; font-size: 16px;}
+        .stSidebar {background-color: #343a40; color: white;}
+        .stSidebar .sidebar-content {color: white;}
+        h1 {color: #007BFF;}
+        h2, h3, h4 {color: #343a40;}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+apply_custom_css()
+
 # Title and Description
-st.title("Enhanced Movie Recommendation System")
-st.markdown("""
-Welcome to the Enhanced Movie Recommendation System! Enter your favorite movie, and we'll recommend similar movies based on genres, keywords, taglines, cast, and director.
-""")
+st.title("🎥 Enhanced Movie Recommendation System")
+st.markdown(
+    """
+    Welcome to the **Enhanced Movie Recommendation System**! Enter your favorite movie, and we'll recommend similar movies with detailed insights.
+    """
+)
 
 # Preloaded dataset
 movies_data = pd.read_csv("movies.csv")
@@ -31,13 +52,13 @@ similarity = cosine_similarity(feature_vectors)
 
 # User Input with Dropdown
 list_of_all_titles = movies_data['title'].tolist()
-movie_name = st.text_input("Search for your favorite movie:")
+movie_name = st.text_input("🔍 Search for your favorite movie:")
 if movie_name:
     close_matches = difflib.get_close_matches(movie_name, list_of_all_titles, n=5)
     if close_matches:
         movie_name = st.selectbox("Did you mean:", close_matches)
     else:
-        st.error("No close match found. Please try another movie.")
+        st.error("⚠️ No close match found. Please try another movie.")
 
 if movie_name and movie_name in list_of_all_titles:
     # Get the index of the movie
@@ -48,11 +69,12 @@ if movie_name and movie_name in list_of_all_titles:
     sorted_similar_movies = sorted(similarity_score, key=lambda x: x[1], reverse=True)
 
     # Filter Recommendations
-    min_vote_count = st.slider("Minimum Votes:", 0, 1000, 100)
-    min_rating = st.slider("Minimum Rating:", 0.0, 10.0, 7.0)
+    st.sidebar.markdown("### Filters")
+    min_vote_count = st.sidebar.slider("Minimum Votes:", 0, 1000, 100)
+    min_rating = st.sidebar.slider("Minimum Rating:", 0.0, 10.0, 7.0)
 
     # Display recommended movies in a table
-    st.subheader("Movies recommended for you:")
+    st.subheader("🎬 Movies Recommended for You:")
     recommended_movies = []
     for i, movie in enumerate(sorted_similar_movies):
         index = movie[0]
@@ -72,33 +94,41 @@ if movie_name and movie_name in list_of_all_titles:
             })
 
     if recommended_movies:
+        st.markdown(
+            """
+            <style>
+            .dataframe {border: 1px solid #ddd; border-radius: 5px; overflow: hidden;}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
         recommended_df = pd.DataFrame(recommended_movies)
         st.table(recommended_df)
         # Allow users to download recommendations
-        st.download_button("Download Recommendations", recommended_df.to_csv(index=False), "recommendations.csv")
+        st.download_button("📥 Download Recommendations", recommended_df.to_csv(index=False), "recommendations.csv")
     else:
-        st.warning("No movies found matching your criteria.")
+        st.warning("⚠️ No movies found matching your criteria.")
 
     # More Like This Feature
-    if st.button("More Like This"):
+    if st.button("🔄 More Like This"):
         similar_index = sorted_similar_movies[1][0]
         similar_movie = movies_data.iloc[similar_index]['title']
-        st.write(f"More movies like **{similar_movie}**")
+        st.write(f"🎥 More movies like **{similar_movie}**")
 else:
-    st.info("Please enter a movie to get recommendations.")
+    st.info("ℹ️ Please enter a movie to get recommendations.")
 
 # Data Insights Section
-st.sidebar.title("Insights")
+st.sidebar.title("📊 Insights")
 st.sidebar.markdown("Explore insights from the dataset.")
 
-if st.sidebar.checkbox("Show Genre Distribution"):
+if st.sidebar.checkbox("📈 Show Genre Distribution"):
     genre_counts = movies_data['genres'].value_counts().head(10)
     st.bar_chart(genre_counts)
 
-if st.sidebar.checkbox("Top Rated Movies"):
+if st.sidebar.checkbox("⭐ Top Rated Movies"):
     top_rated = movies_data.sort_values(by='vote_average', ascending=False).head(10)
     st.write(top_rated[['title', 'vote_average', 'genres']])
 
-if st.sidebar.checkbox("Most Popular Movies"):
+if st.sidebar.checkbox("🔥 Most Popular Movies"):
     most_popular = movies_data.sort_values(by='popularity', ascending=False).head(10)
     st.write(most_popular[['title', 'popularity', 'genres']])
