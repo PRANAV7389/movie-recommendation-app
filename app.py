@@ -4,6 +4,8 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import difflib
+import gdown
+import os
 
 # Title and Description
 st.title("Enhanced Movie Recommendation System")
@@ -11,8 +13,26 @@ st.markdown("""
 Welcome to the Enhanced Movie Recommendation System! Enter your favorite movie, and we'll recommend similar movies with detailed information, including genres, cast, directors, ratings, and runtime.
 """)
 
+# URLs for IMDb datasets
+DATASETS = {
+    "title.principals.tsv.gz": "https://drive.google.com/uc?id=1ykVu-zhIY2jQCyPgMOiumQ1lgfpXvS05",
+    "name.basics.tsv.gz": "https://drive.google.com/uc?id=1aY6nJJK-z1GAah-QROa77N19SsUpI-hF",
+    "title.crew.tsv.gz": "https://drive.google.com/uc?id=1bpUAdyJMOuntT3Hn9_RGQIuhB8zLjPLu",
+    "title.ratings.tsv.gz": "https://drive.google.com/uc?id=1rdWojWUUdLuPjrO7GCZbKUTMdkdjAOdz"
+}
+
+# Function to download datasets
+@st.cache_data
+def download_datasets():
+    for filename, url in DATASETS.items():
+        if not os.path.exists(filename):
+            gdown.download(url, filename, quiet=False)
+
+# Download the datasets
+download_datasets()
+
 # Load IMDb datasets
-@st.cache
+@st.cache_data
 def load_data():
     basics = pd.read_csv("title.basics.tsv.gz", sep="\t", na_values="\\N", low_memory=False)
     crew = pd.read_csv("title.crew.tsv.gz", sep="\t", na_values="\\N", low_memory=False)
