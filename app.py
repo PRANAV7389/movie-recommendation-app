@@ -73,7 +73,7 @@ if movie_name and movie_name in list_of_all_titles:
     min_vote_count = st.sidebar.slider("Minimum Votes:", 0, 1000, 100)
     min_rating = st.sidebar.slider("Minimum Rating:", 0.0, 10.0, 7.0)
 
-    # Display recommended movies in a table
+    # Display recommended movies in an interactive table
     st.subheader("🎬 Movies Recommended for You:")
     recommended_movies = []
     for i, movie in enumerate(sorted_similar_movies):
@@ -94,16 +94,8 @@ if movie_name and movie_name in list_of_all_titles:
             })
 
     if recommended_movies:
-        st.markdown(
-            """
-            <style>
-            .dataframe {border: 1px solid #ddd; border-radius: 5px; overflow: hidden;}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
         recommended_df = pd.DataFrame(recommended_movies)
-        st.table(recommended_df)
+        st.dataframe(recommended_df, use_container_width=True)
         # Allow users to download recommendations
         st.download_button("📥 Download Recommendations", recommended_df.to_csv(index=False), "recommendations.csv")
     else:
